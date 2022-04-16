@@ -13,7 +13,7 @@ import (
 )
 
 type LoginRequest struct {
-	Token string `json:"token"`
+	IDToken string `json:"id_token"`
 }
 
 func Login(c *gin.Context) {
@@ -21,7 +21,7 @@ func Login(c *gin.Context) {
 	if c.BindJSON(&loginRequest) != nil {
 		return
 	}
-	claims, err := jwt.ValidateGoogleJWT(loginRequest.Token)
+	claims, err := jwt.ValidateGoogleJWT(loginRequest.IDToken)
 	if err != nil {
 		c.JSON(http.StatusForbidden, map[string]string{"error": err.Error()})
 		return
@@ -45,5 +45,6 @@ func Login(c *gin.Context) {
 			break
 		}
 	}
-	c.JSON(http.StatusOK, map[string]string{"access_token": accessToken})
+	c.SetCookie("access_token", accessToken, 2147483647, "/", "", true, true)
+	c.JSON(http.StatusOK, map[string]string{})
 }
