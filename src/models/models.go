@@ -13,5 +13,5 @@ type Note struct {
 	ID       uint64
 	Contents string
 	UserID   uint64
-	User     `gorm:"foreignKey:UserID"`
+	User     User `gorm:"foreignKey:UserID"`
 }
