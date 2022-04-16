@@ -1,13 +1,15 @@
-package views
+package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
-	jwt "notes/src/jwt"
+	"notes/src/jwt"
 	"notes/src/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type LoginRequest struct {
@@ -28,13 +30,13 @@ func Login(c *gin.Context) {
 	for {
 		accessToken = uuid.New().String()
 		newUser := &models.User{
-			FirstName: claims.FirstName,
-			LastName: claims.LastName,
+			FirstName:   claims.FirstName,
+			LastName:    claims.LastName,
 			AccessToken: sql.NullString{String: accessToken, Valid: true},
 		}
-		if err := models.DB.Create(newUser).Error; err != nil {
+		if err := models.DB.Create(newUser).Error; errors.Is(err, gorm.ErrInvalidTransaction) {
 			// Probably, UUID was matching with the other UUID.
-			// I know that probability of that is very low, but I'll handle it nonetheless.
+			// I know that the probability of that is very low, but I'll handle it nonetheless.
 			// I don't know how to generate completely unique UUIDs, so we're just gonna
 			// hope that the next one is gonna be disengaged.
 			// Or the one after it. Or the one after after it. Or the one after after after it...

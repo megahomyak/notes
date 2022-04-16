@@ -18,7 +18,7 @@ type ConfigStruct struct {
 var Config ConfigStruct
 
 func init() {
-	rawConfig, err := ioutil.ReadFile("config.json")
+	rawConfig, err := ioutil.ReadFile("config/config.json")
 	if err != nil {
 		panic(err)
 	}
