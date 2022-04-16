@@ -12,7 +12,7 @@ type ConfigStruct struct {
 	} `json:"google"`
 	Database struct {
 		Filename string `json:"filename"`
-	} `json:"filename"`
+	} `json:"database"`
 }
 
 var Config ConfigStruct
