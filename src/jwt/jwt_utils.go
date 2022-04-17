@@ -4,7 +4,6 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"notes/src/config"
@@ -43,12 +42,16 @@ func getGooglePublicKey(keyID string) (*rsa.PublicKey, error) {
 	return key, nil
 }
 
-func ValidateGoogleJWT(raw_token string) (GoogleClaims, error) {
+func ValidateGoogleJWT(rawToken string) (GoogleClaims, error) {
 	token, err := jwt.ParseWithClaims(
-		raw_token,
+		rawToken,
 		&GoogleClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-            return getGooglePublicKey(fmt.Sprintf("%s", token.Header["kid"]))
+			{
+				// Workaround to remove an error that occurs because of the time difference
+				token.Claims.(*GoogleClaims).StandardClaims.IssuedAt = 0
+			}
+            return getGooglePublicKey(token.Header["kid"].(string))
         },
 	)
     if err != nil {

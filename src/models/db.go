@@ -5,10 +5,13 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func getDB(databaseFileName string) (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(databaseFileName), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(databaseFileName), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		return nil, err
 	}

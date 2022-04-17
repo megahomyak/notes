@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <h1>
+        Notes
+    </h1>
+    {{ if .UserIsLoggedIn }}
+        {{ if .Notes }}
+            <p>Your notes:</p>
+            {{ range .Notes }}
+                <a href="/notes/{{ .ID }}">{{ .Name }}</a>
+            {{ end }}
+        {{ else }}
+            <p>You haven't created any notes yet!</p>
+        {{ end }}
+    {{ else }}
+        <p>It seems like you're not logged in!</p>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <meta name="google-signin-client_id" content="852436479284-6t9jptc5el744ti4o59a98ufh6uilnim.apps.googleusercontent.com">
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <script>
+            async function onSignIn(googleUser) {
+                const idToken = googleUser.getAuthResponse().id_token;
+                await fetch("/api/login/", {
+                    method: "POST",
+                    body: JSON.stringify({"id_token": idToken})
+                });
+                location.reload();
+            }
+        </script>
+    {{ end }}
+</html>
