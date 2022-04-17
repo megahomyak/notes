@@ -12,12 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type LoginRequest struct {
+type loginRequest struct {
 	IDToken string `json:"id_token"`
 }
 
 func Login(c *gin.Context) {
-	var loginRequest LoginRequest
+	var loginRequest loginRequest
 	if c.BindJSON(&loginRequest) != nil {
 		return
 	}
