@@ -26,12 +26,12 @@ func Login(c *gin.Context) {
 	}
 	user := models.User{}
 	var accessToken string
-	creationFailed := errors.Is(
+	userNotFound := errors.Is(
 		models.DB.Where("jwt_subject = ?", claims.Subject).Take(&user).Error,
 		gorm.ErrRecordNotFound,
 	)
-	if creationFailed || !user.AccessToken.Valid {
-		if creationFailed {
+	if userNotFound || !user.AccessToken.Valid {
+		if userNotFound {
 			user.FirstName = claims.FirstName
 			user.LastName = claims.LastName
 			user.JWTSubject = claims.Subject
