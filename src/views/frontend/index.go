@@ -8,8 +8,8 @@ import (
 )
 
 func Index(c *gin.Context) {
-	user := utils.GetUser(c, utils.WithNotes)
-	if user == nil {
+	user, err := utils.GetUser(c, utils.WithNotes)
+	if err != nil {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"userIsLoggedIn": false,
 		})
