@@ -1,6 +1,7 @@
 package main
 
 import (
+	"notes/src/middleware"
 	"notes/src/templates/loader"
 	api_views "notes/src/views/api"
 	frontend_views "notes/src/views/frontend"
@@ -15,7 +16,10 @@ func main() {
 	loader.LoadTemplates(router, "{{", "}}", "templates/*", "templates/generic_page.tmpl")
 
 	router.GET("/", frontend_views.Index)
-	router.GET("/note/:note_id", frontend_views.Note)
+
+	routerWithAuthenticationCheck := router.Group("/")
+	routerWithAuthenticationCheck.Use(middleware.AuthMiddleware)
+	routerWithAuthenticationCheck.GET("/note/:note_id", frontend_views.Note)
 
 	apiRoute := router.Group("/api")
 	apiRoute.POST("/login/", api_views.Login)
