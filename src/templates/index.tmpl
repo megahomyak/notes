@@ -1,27 +1,29 @@
-{{ template "generic_page" . }}
+{{ template "generic_page" . -}}
 
-{{ define "title" }}
-    {{ if .userIsLoggedIn }}
+{{ define "title" -}}
+    {{ if .userIsLoggedIn -}}
         Your Notes
-    {{ else }}
+    {{- else -}}
         Notes
-    {{ end }}
-{{ end }}
+    {{- end -}}
+{{ end -}}
 
-{{ define "header" }}
-    {{ template "title" . }}
-{{ end }}
+{{ define "header" -}}
+    {{ template "title" . -}}
+{{ end -}}
 
-{{ define "contents" }}
-    {{ if .userIsLoggedIn }}
-        {{ if .notes }}
-            {{ range .notes }}
-                <a href="/notes/{{ .ID }}">{{ .Name }}</a>
-            {{ end }}
-        {{ else }}
+{{ define "contents" -}}
+    {{ if .userIsLoggedIn -}}
+        {{ if .notes -}}
+            <ol>
+            {{- range .notes -}}
+                <li><a href="/note/{{ .ID }}">{{ .Name }}</a></li>
+            {{- end -}}
+            </ol>
+        {{- else -}}
             <p>You haven't created any notes yet!</p>
-        {{ end }}
-    {{ else }}
+        {{- end -}}
+    {{- else -}}
         <p>It seems like you're not logged in!</p>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <meta name="google-signin-client_id" content="852436479284-6t9jptc5el744ti4o59a98ufh6uilnim.apps.googleusercontent.com">
@@ -38,5 +40,5 @@
                 location.reload();
             }
         </script>
-    {{ end }}
-{{ end }}
+    {{- end -}}
+{{ end -}}

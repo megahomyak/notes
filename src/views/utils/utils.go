@@ -21,7 +21,7 @@ func GetUser(c *gin.Context, withNotes bool) (*models.User) {
 		user := models.User{}
 		query := models.DB.Where("access_token = ?", accessToken)
 		if withNotes {
-			query = query.Preload("Notes").Order("notes.id DESC")
+			query = query.Preload("Notes").Order("id DESC")
 		}
 		if errors.Is(query.Take(&user).Error, gorm.ErrRecordNotFound) {
 			return nil
