@@ -1,7 +1,7 @@
 package main
 
 import (
-	"notes/src/templates"
+	"notes/src/templates/loader"
 	api_views "notes/src/views/api"
 	frontend_views "notes/src/views/frontend"
 
@@ -11,9 +11,8 @@ import (
 
 func main() {
     router := gin.Default()
-	router.LoadHTMLGlob("templates/*")
 
-	templates.LoadTemplates(router, "{{", "}}", "templates/*", "templates/generic_page.tmpl")
+	loader.LoadTemplates(router, "{{", "}}", "templates/*", "templates/generic_page.tmpl")
 
 	router.GET("/", frontend_views.Index)
 	router.GET("/note/:note_id", frontend_views.Note)

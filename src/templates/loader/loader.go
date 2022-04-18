@@ -1,8 +1,10 @@
-package templates
+package loader
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -43,6 +45,11 @@ func LoadTemplates(engine *gin.Engine, leftDelimiter string, rightDelimiter stri
 		panic(err)
 	}
 	for _, templatePath := range templatePaths {
+		fmt.Print(templatePath)
+		fileStats, _ := os.Stat(templatePath)
+		if fileStats.IsDir() {
+			continue
+		}
 		templateName := filepath.Base(templatePath)
 		template := template.Must(
 			template.New(templateName).Delims(leftDelimiter, rightDelimiter).Funcs(engine.FuncMap).ParseFiles(templatePath, sharedTemplatePath),
