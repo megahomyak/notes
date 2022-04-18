@@ -1,7 +1,7 @@
 {{ template "generic_page" . }}
 
 {{ define "title" }}
-    {{ if .UserIsLoggedIn }}
+    {{ if .userIsLoggedIn }}
         Your Notes
     {{ else }}
         Notes
@@ -13,9 +13,9 @@
 {{ end }}
 
 {{ define "contents" }}
-    {{ if .UserIsLoggedIn }}
-        {{ if .Notes }}
-            {{ range .Notes }}
+    {{ if .userIsLoggedIn }}
+        {{ if .notes }}
+            {{ range .notes }}
                 <a href="/notes/{{ .ID }}">{{ .Name }}</a>
             {{ end }}
         {{ else }}
