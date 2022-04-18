@@ -14,9 +14,10 @@ func Index(c *gin.Context) {
 			"userIsLoggedIn": false,
 		})
 	} else {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"userIsLoggedIn": true,
-			"notes": user.Notes,
-		})
+        c.HTML(http.StatusOK, "index.tmpl", gin.H{
+            "userIsLoggedIn": true,
+            "notes": user.Notes,
+        })
 	}
 }
+
