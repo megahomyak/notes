@@ -16,4 +16,5 @@ type Note struct {
 	Name     string
 	Contents string
 	UserID   uint64
+	Owner    *User `gorm:"ForeignKey:UserID"`
 }
