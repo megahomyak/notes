@@ -21,7 +21,7 @@ func Note(c *gin.Context) {
 		if note.Owner.AccessToken.Valid {
 			accessToken, err := c.Cookie("access_token")
 			if err != nil {
-				c.HTML(http.StatusBadRequest, "token_was_not_provided.html", nil)
+				c.HTML(http.StatusBadRequest, "token_was_not_provided.tmpl", nil)
 				return
 			}
 			if note.Owner.AccessToken.String == accessToken {
