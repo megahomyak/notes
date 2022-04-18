@@ -1,0 +1,7 @@
+{{ template "generic_page" . }}
+
+{{ define "title" }}{{ .note.Name }}{{ end }}
+
+{{ define "header" }}{{ template "title" . }}{{ end }}
+
+{{ define "contents" }}{{ .note.Contents }}{{ end }}

@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"notes/src/jwt"
 	"notes/src/models"
-	"notes/src/utils"
+	"notes/src/views/utils/jwt"
+	"notes/src/views/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
