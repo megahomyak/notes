@@ -20,9 +20,11 @@
         <script>
             async function onSignIn(googleUser) {
                 const idToken = googleUser.getAuthResponse().id_token;
+                let requestForm = new FormData();
+                requestForm.set("id_token", idToken);
                 await fetch("/api/login/", {
                     method: "POST",
-                    body: JSON.stringify({"id_token": idToken})
+                    body: requestForm,
                 });
                 location.reload();
             }

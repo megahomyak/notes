@@ -6,24 +6,22 @@ import (
 	"net/http"
 	"notes/src/jwt"
 	"notes/src/models"
+	"notes/src/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type loginRequest struct {
-	IDToken string `json:"id_token"`
-}
-
 func Login(c *gin.Context) {
-	var loginRequest loginRequest
-	if c.BindJSON(&loginRequest) != nil {
+	idToken := c.PostForm("id_token")
+	if idToken == "" {
+		c.JSON(http.StatusForbidden, utils.MakeJSONError("id_token wasn't provided!"))
 		return
 	}
-	claims, err := jwt.ValidateGoogleJWT(loginRequest.IDToken)
+	claims, err := jwt.ValidateGoogleJWT(idToken)
 	if err != nil {
-		c.JSON(http.StatusForbidden, map[string]string{"error": err.Error()})
+		c.JSON(http.StatusForbidden, utils.MakeJSONError(err.Error()))
 		return
 	}
 	user := models.User{}

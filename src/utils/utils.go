@@ -30,3 +30,7 @@ func GetUser(c *gin.Context, withNotes bool) (*models.User) {
 		}
 	}
 }
+
+func MakeJSONError(error_text string) map[string]string {
+	return map[string]string{"error": error_text}
+}
