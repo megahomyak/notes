@@ -1,11 +1,20 @@
-<!DOCTYPE html>
-<html>
-    <h1>
+{{ template "generic_page" .}}
+
+{{ define "title" }}
+    {{ if .UserIsLoggedIn }}
+        Your Notes
+    {{ else }}
         Notes
-    </h1>
+    {{ end }}
+{{ end }}
+
+{{ define "header" }}
+    {{ template "title" . }}
+{{ end }}
+
+{{ define "contents" }}
     {{ if .UserIsLoggedIn }}
         {{ if .Notes }}
-            <p>Your notes:</p>
             {{ range .Notes }}
                 <a href="/notes/{{ .ID }}">{{ .Name }}</a>
             {{ end }}
@@ -30,4 +39,4 @@
             }
         </script>
     {{ end }}
-</html>
+{{ end }}

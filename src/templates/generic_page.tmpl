@@ -1,0 +1,14 @@
+{{ define "generic_page" }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ template "title" . }}</title>
+    </head>
+    <body>
+        <header>
+            <h1>{{ template "header" . }}</h1>
+        </header>
+        {{ template "contents" . }}
+    </body>
+</html>
+{{ end }}
