@@ -22,7 +22,7 @@ const (
 	WithoutNotes = false
 )
 
-func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
+func GetAccessTokenHash(c *gin.Context) ([]byte, error) {
 	encodedAccessToken, err := c.Cookie("access_token")
 	if err != nil || encodedAccessToken == "" {
 		return nil, &AccessTokenNotFound{}
@@ -32,8 +32,16 @@ func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
 		return nil, base64EncodingError
 	}
 	accessTokenHash := sha256.Sum256(decodedAccessToken)
+	return accessTokenHash[:], nil
+}
+
+func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
 	token := models.AccessToken{}
-	hexHash := hex.EncodeToString(accessTokenHash[:])
+	accessTokenHash, err := GetAccessTokenHash(c)
+	if err != nil {
+		return nil, err
+	}
+	hexHash := hex.EncodeToString(accessTokenHash)
 	query := models.DB.Where("lower(hex(hash)) = ?", hexHash).Preload("Owner")  // A nasty workaround.
 	if withNotes {
 		query = query.Preload("Owner.Notes")
