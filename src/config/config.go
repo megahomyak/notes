@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 )
 
-type ConfigStruct struct {
+var Config struct {
 	Google struct {
 		ClientID     string `json:"client_id"`
 		ClientSecret string `json:"client_secret"`
@@ -14,8 +14,6 @@ type ConfigStruct struct {
 		Filename string `json:"filename"`
 	} `json:"database"`
 }
-
-var Config ConfigStruct
 
 func init() {
 	rawConfig, err := ioutil.ReadFile("config/config.json")
