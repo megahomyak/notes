@@ -50,10 +50,10 @@
                 const idToken = googleUser.getAuthResponse().id_token;
                 let requestForm = new FormData();
                 requestForm.set("id_token", idToken);
-                console.log(await fetch("/api/login/", {
+                await fetch("/api/login/", {
                     method: "POST",
                     body: requestForm,
-                }));
+                });
                 location.reload();
             }
         </script>
