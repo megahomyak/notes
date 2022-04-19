@@ -24,5 +24,9 @@ func main() {
 	apiRoute := router.Group("/api")
 	apiRoute.POST("/login/", api_views.Login)
 
+	routerWithCSRFCheck := apiRoute.Group("/")
+	routerWithCSRFCheck.Use(middleware.CrsfMiddleware)
+	routerWithCSRFCheck.POST("/logout/", api_views.Logout)
+
     router.Run("localhost:80");
 }

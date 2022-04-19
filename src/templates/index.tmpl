@@ -1,11 +1,18 @@
 {{ template "generic_page" . -}}
 
 {{ define "title" -}}
-    {{ if .userIsLoggedIn -}}
+    {{ if .user -}}
         Your Notes
     {{- else -}}
         Notes
     {{- end -}}
+{{ end -}}
+
+{{ define "head" -}}
+    {{ if not .user }}
+        <meta name="google-signin-client_id" content="{{ .googleClientID }}">
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+    {{ end }}
 {{ end -}}
 
 {{ define "header" -}}
@@ -13,10 +20,22 @@
 {{ end -}}
 
 {{ define "contents" -}}
-    {{ if .userIsLoggedIn -}}
-        {{ if .notes -}}
+    {{ if .user -}}
+        <p>Signed in as {{ .user.FirstName }}{{ if .user.LastName }} {{ .user.LastName }}{{ end }} | <a href="#" onclick="signOut();">Sign out</a></p>
+        <script>
+            async function signOut() {
+                let requestForm = new FormData();
+                requestForm.set("csrf_token", "{{ .csrfToken }}")
+                await fetch("/api/logout/", {
+                    method: "POST",
+                    body: requestForm,
+                });
+                location.reload();
+            }
+        </script>
+        {{ if .user.Notes -}}
             <ol>
-            {{- range .notes -}}
+            {{- range .user.Notes -}}
                 <li><a href="/note/{{ .ID }}">{{ .Name }}</a></li>
             {{- end -}}
             </ol>
@@ -25,8 +44,6 @@
         {{- end -}}
     {{- else -}}
         <p>It seems like you're not logged in!</p>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <meta name="google-signin-client_id" content="852436479284-6t9jptc5el744ti4o59a98ufh6uilnim.apps.googleusercontent.com">
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
         <script>
             async function onSignIn(googleUser) {
