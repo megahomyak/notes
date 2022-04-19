@@ -26,7 +26,7 @@
             async function signOut() {
                 let requestForm = new FormData();
                 requestForm.set("csrf_token", "{{ .csrfToken }}")
-                await fetch("/api/logout/", {
+                await fetch("/api/sign_out/", {
                     method: "POST",
                     body: requestForm,
                 });
@@ -43,14 +43,14 @@
             <p>You haven't created any notes yet!</p>
         {{- end -}}
     {{- else -}}
-        <p>It seems like you're not logged in!</p>
+        <p>It seems like you're not signed in!</p>
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
         <script>
             async function onSignIn(googleUser) {
                 const idToken = googleUser.getAuthResponse().id_token;
                 let requestForm = new FormData();
                 requestForm.set("id_token", idToken);
-                await fetch("/api/login/", {
+                await fetch("/api/sign_in/", {
                     method: "POST",
                     body: requestForm,
                 });

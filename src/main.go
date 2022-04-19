@@ -33,12 +33,12 @@ func main() {
 
 	{
 		apiRoute := router.Group("/api")
-		apiRoute.POST("/login/", api_views.Login)
+		apiRoute.POST("/sign_in/", api_views.SignIn)
 
 		{
 			routerWithCSRFCheck := apiRoute.Group("/")
 			routerWithCSRFCheck.Use(middleware.CrsfMiddleware)
-			routerWithCSRFCheck.POST("/logout/", api_views.Logout)
+			routerWithCSRFCheck.POST("/sign_out/", api_views.SignOut)
 		}
 	}
 

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Logout(c *gin.Context) {
+func SignOut(c *gin.Context) {
 	accessTokenHash, err := utils.GetAccessTokenHash(c)
 	if err != nil {
 		utils.MakeJSONError("access_token wasn't provided!")

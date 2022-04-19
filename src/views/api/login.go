@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Login(c *gin.Context) {
+func SignIn(c *gin.Context) {
 	idToken := c.PostForm("id_token")
 	if idToken == "" {
 		c.JSON(http.StatusForbidden, utils.MakeJSONError("id_token wasn't provided!"))
