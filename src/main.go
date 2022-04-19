@@ -6,12 +6,15 @@ import (
 	api_views "notes/src/views/api"
 	frontend_views "notes/src/views/frontend"
 	"notes/src/views/utils"
+	"notes/src/workers"
 
 	"github.com/gin-gonic/gin"
 )
 
 
 func main() {
+	// Setting up routes.
+
     router := gin.Default()
 
 	loader.LoadTemplates(router, "{{", "}}", "templates/*", "templates/template_fillers.tmpl", "templates/generic_page.tmpl")
@@ -38,6 +41,12 @@ func main() {
 			routerWithCSRFCheck.POST("/logout/", api_views.Logout)
 		}
 	}
+
+	// Setting up workers.
+
+	go workers.DeleteExpiredTokensPeriodically()
+
+	// Running the server.
 
     router.Run("localhost:80");
 }
