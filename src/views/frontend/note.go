@@ -4,13 +4,13 @@ import (
 	"errors"
 	"net/http"
 	"notes/src/models"
-	"notes/src/views/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func Note(c *gin.Context) {
+	user := c.MustGet("user").(*models.User)
 	note := models.Note{}
 	noteID := c.Param("note_id")
 	if errors.Is(
@@ -19,10 +19,7 @@ func Note(c *gin.Context) {
 	) {
 		c.HTML(http.StatusNotFound, "note_not_found.tmpl", gin.H{"noteID": noteID})
 	} else {
-		user, err := utils.GetUserByToken(c, utils.WithoutNotes)
-		if err != nil {
-			c.HTML(http.StatusUnauthorized, "access_token_is_invalid.tmpl", nil)
-		} else if user.ID == note.ID {
+		if user.ID == note.ID {
 			c.HTML(http.StatusOK, "note.tmpl", gin.H{"note": note})
 		} else {
 			c.HTML(http.StatusForbidden, "note_is_inaccessible.tmpl", gin.H{"noteID": noteID})

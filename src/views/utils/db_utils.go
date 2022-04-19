@@ -23,11 +23,11 @@ const (
 )
 
 func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
-	encodedAccessToken, cookieExists := c.Get("accessToken")
-	if !cookieExists {
+	encodedAccessToken, err := c.Cookie("access_token")
+	if err != nil || encodedAccessToken == "" {
 		return nil, &AccessTokenNotFound{}
 	}
-	decodedAccessToken, base64EncodingError := base64.StdEncoding.DecodeString(encodedAccessToken.(string))
+	decodedAccessToken, base64EncodingError := base64.StdEncoding.DecodeString(encodedAccessToken)
 	if base64EncodingError != nil {
 		return nil, base64EncodingError
 	}

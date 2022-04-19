@@ -5,6 +5,7 @@ import (
 	"notes/src/templates/loader"
 	api_views "notes/src/views/api"
 	frontend_views "notes/src/views/frontend"
+	"notes/src/views/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,18 +16,28 @@ func main() {
 
 	loader.LoadTemplates(router, "{{", "}}", "templates/*", "templates/template_fillers.tmpl", "templates/generic_page.tmpl")
 
-	router.GET("/", frontend_views.Index)
+	{
+		routerWithRequiredUser := router.Group("/")
+		routerWithRequiredUser.Use(middleware.UserGetter(utils.WithoutNotes, middleware.AbortOnFailure))
+		routerWithRequiredUser.GET("/note/:note_id", frontend_views.Note)
+	}
 
-	routerWithAuthenticationCheck := router.Group("/")
-	routerWithAuthenticationCheck.Use(middleware.AuthMiddleware)
-	routerWithAuthenticationCheck.GET("/note/:note_id", frontend_views.Note)
+	{
+		routerWithOptionalUser := router.Group("/")
+		routerWithOptionalUser.Use(middleware.UserGetter(utils.WithNotes, middleware.IgnoreFailure))
+		routerWithOptionalUser.GET("/", frontend_views.Index)
+	}
 
-	apiRoute := router.Group("/api")
-	apiRoute.POST("/login/", api_views.Login)
+	{
+		apiRoute := router.Group("/api")
+		apiRoute.POST("/login/", api_views.Login)
 
-	routerWithCSRFCheck := apiRoute.Group("/")
-	routerWithCSRFCheck.Use(middleware.CrsfMiddleware)
-	routerWithCSRFCheck.POST("/logout/", api_views.Logout)
+		{
+			routerWithCSRFCheck := apiRoute.Group("/")
+			routerWithCSRFCheck.Use(middleware.CrsfMiddleware)
+			routerWithCSRFCheck.POST("/logout/", api_views.Logout)
+		}
+	}
 
     router.Run("localhost:80");
 }
