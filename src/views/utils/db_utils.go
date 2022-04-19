@@ -3,7 +3,6 @@ package utils
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"errors"
 	"notes/src/models"
 
@@ -41,8 +40,7 @@ func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	hexHash := hex.EncodeToString(accessTokenHash)
-	query := models.DB.Where("lower(hex(hash)) = ?", hexHash).Preload("Owner")  // A nasty workaround.
+	query := models.DB.Where("hash = ?", accessTokenHash).Preload("Owner")
 	if withNotes {
 		query = query.Preload("Owner.Notes")
 	}

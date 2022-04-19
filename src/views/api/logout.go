@@ -8,11 +8,11 @@ import (
 )
 
 func Logout(c *gin.Context) {
-	accessToken, err := utils.GetAccessTokenHash(c)
+	accessTokenHash, err := utils.GetAccessTokenHash(c)
 	if err != nil {
 		utils.MakeJSONError("access_token wasn't provided!")
 	} else {
-		models.DB.Delete(&models.AccessToken{}, "hash = ?", accessToken)
+		models.DB.Delete(&models.AccessToken{}, "hash = ?", accessTokenHash)
 		c.SetCookie("access_token", "", 0, "/", "", true, true)
 	}
 }
