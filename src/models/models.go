@@ -30,5 +30,5 @@ type Note struct {
 var defaultTokenExpirationPeriod time.Duration = time.Hour * 24 * 30 * 6
 
 func (token *AccessToken) ResetExpiration() {
-	token.ExpiresIn = time.Now().Add(defaultTokenExpirationPeriod)
+	DB.Model(token).Update("expires_in", time.Now().Add(defaultTokenExpirationPeriod))
 }
