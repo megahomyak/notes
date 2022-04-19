@@ -13,7 +13,7 @@ import (
 func main() {
     router := gin.Default()
 
-	loader.LoadTemplates(router, "{{", "}}", "templates/*", "templates/generic_page.tmpl")
+	loader.LoadTemplates(router, "{{", "}}", "templates/*", "templates/template_fillers.tmpl", "templates/generic_page.tmpl")
 
 	router.GET("/", frontend_views.Index)
 

@@ -30,10 +30,10 @@
                     method: "POST",
                     body: requestForm,
                 });
-                location.reload();
+                location.href = "";
             }
         </script>
-        {{ if .user.Notes -}}
+        {{ if ne (len .user.Notes) 0 -}}
             <ol>
             {{- range .user.Notes -}}
                 <li><a href="/note/{{ .ID }}">{{ .Name }}</a></li>
@@ -50,10 +50,10 @@
                 const idToken = googleUser.getAuthResponse().id_token;
                 let requestForm = new FormData();
                 requestForm.set("id_token", idToken);
-                await fetch("/api/login/", {
+                console.log(await fetch("/api/login/", {
                     method: "POST",
                     body: requestForm,
-                });
+                }));
                 location.reload();
             }
         </script>

@@ -34,7 +34,7 @@ func (htmlRender CustomHTMLRender) Instance(templateName string, arguments inter
 	return CustomRender{template: htmlRender.templates[templateName], arguments: arguments}
 }
 
-func LoadTemplates(engine *gin.Engine, leftDelimiter string, rightDelimiter string, templatesGlob string, sharedTemplatePath string) {
+func LoadTemplates(engine *gin.Engine, leftDelimiter string, rightDelimiter string, templatesGlob string, fillerTemplatePath string, sharedTemplatePath string) {
 	// The following line is a workaround, because GETTING delimiters from the engine is impossible, but I need them,
 	// so users should now provide delimiters to my function. How bad.
 	engine.Delims(leftDelimiter, rightDelimiter)  // Nice encapsulation you have here, folks!
@@ -50,7 +50,11 @@ func LoadTemplates(engine *gin.Engine, leftDelimiter string, rightDelimiter stri
 		}
 		templateName := filepath.Base(templatePath)
 		template := template.Must(
-			template.New(templateName).Delims(leftDelimiter, rightDelimiter).Funcs(engine.FuncMap).ParseFiles(templatePath, sharedTemplatePath),
+			template.
+				New(templateName).
+				Delims(leftDelimiter, rightDelimiter).
+				Funcs(engine.FuncMap).
+				ParseFiles(fillerTemplatePath, templatePath, sharedTemplatePath),
 		)
 		templates[templateName] = template
 	}

@@ -9,19 +9,20 @@ import (
 )
 
 func Index(c *gin.Context) {
-	user, err := utils.GetUser(c, utils.WithNotes)
+	accessToken, err := c.Cookie("access_token")
+	c.Set("accessToken", accessToken)
+	user, err := utils.GetUserByToken(c, utils.WithNotes)
 	if err != nil {
-        c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"user": user,
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"user":           nil,
 			"googleClientID": config.Config.Google.ClientID,
-        })
+		})
 	} else {
 		templateData := gin.H{
-			"user": user,
+			"user":           user,
 			"googleClientID": config.Config.Google.ClientID,
 		}
 		utils.AddCSRFToken(c, templateData)
 		c.HTML(http.StatusOK, "index.tmpl", templateData)
 	}
 }
-

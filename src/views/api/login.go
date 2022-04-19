@@ -1,15 +1,15 @@
 package api
 
 import (
-	"database/sql"
+	"crypto/sha256"
+	"encoding/base64"
 	"errors"
 	"net/http"
 	"notes/src/models"
-	"notes/src/views/utils/jwt"
 	"notes/src/views/utils"
+	"notes/src/views/utils/jwt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -25,34 +25,39 @@ func Login(c *gin.Context) {
 		return
 	}
 	user := models.User{}
-	var accessToken string
-	userNotFound := errors.Is(
-		models.DB.Where("jwt_subject = ?", claims.Subject).Take(&user).Error,
-		gorm.ErrRecordNotFound,
-	)
-	if userNotFound || !user.AccessToken.Valid {
-		if userNotFound {
+	var tokenContents []byte
+	transactionError := models.DB.Transaction(func(tx *gorm.DB) error {
+		if errors.Is(
+			models.DB.Where("jwt_subject = ?", claims.Subject).Take(&user).Error,
+			gorm.ErrRecordNotFound,
+		) {
 			user.FirstName = claims.FirstName
 			user.LastName = claims.LastName
 			user.JWTSubject = claims.Subject
+			models.DB.Create(&user)
 		}
+		var accessTokenSlice []byte
 		for {
-			accessToken = uuid.New().String()
-			user.AccessToken = sql.NullString{String: accessToken, Valid: true}
-			if err := models.DB.Create(&user).Error; errors.Is(err, gorm.ErrInvalidTransaction) {
-				// Probably, UUID was matching with the other UUID.
-				// I know that the probability of that is very low, but I'll handle it nonetheless.
-				// I don't know how to generate completely unique UUIDs, so we're just gonna
-				// hope that the next one is gonna be disengaged.
-				// Or the one after it. Or the one after after it. Or the one after after after it...
-				continue
-			} else {
+			tokenContents = utils.MakeUniqueToken()
+			accessToken := sha256.Sum256(tokenContents)
+			accessTokenSlice = accessToken[:]
+			var exists bool
+			models.DB.Model(&models.AccessToken{}).Select("count(*) > 0").Where("hash = ?", accessTokenSlice).Find(&exists)
+			// This PROBABLY introduces a race condition, if the second transaction got the same hash.
+			// I don't know what's going to happen in this situation, especially in SQLite.
+			// This is for the case when the same access token already exists.
+			if !exists {
 				break
 			}
 		}
-	} else {
-		accessToken = user.AccessToken.String
+		token := models.AccessToken{Owner: &user, Hash: accessTokenSlice}
+		token.ResetExpiration()
+		models.DB.Create(&token)
+		return nil
+	})
+	if transactionError != nil {
+		panic(transactionError)
 	}
-	utils.SetPermanentProtectedCookie(c, "access_token", accessToken)
+	utils.SetPermanentProtectedCookie(c, "access_token", base64.StdEncoding.EncodeToString(tokenContents))
 	c.JSON(http.StatusOK, map[string]string{})
 }

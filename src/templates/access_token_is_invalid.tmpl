@@ -1,0 +1,7 @@
+{{ template "generic_page" . -}}
+
+{{ define "title" }}Unauthorized{{ end -}}
+
+{{ define "header" }}Provided Credentials Are Invalid{{ end -}}
+
+{{ define "contents" }}Your <code>access_token</code> wasn't found in the database - probably, it was expired. To fix that, relogin on the <a href="/">index page</a>.{{ end -}}
