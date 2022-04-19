@@ -53,6 +53,6 @@ func Login(c *gin.Context) {
 	} else {
 		accessToken = user.AccessToken.String
 	}
-	c.SetCookie("access_token", accessToken, 2147483647, "/", "", true, true)
+	utils.SetPermanentProtectedCookie(c, "access_token", accessToken)
 	c.JSON(http.StatusOK, map[string]string{})
 }

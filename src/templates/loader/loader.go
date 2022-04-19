@@ -1,7 +1,6 @@
 package loader
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -45,7 +44,6 @@ func LoadTemplates(engine *gin.Engine, leftDelimiter string, rightDelimiter stri
 		panic(err)
 	}
 	for _, templatePath := range templatePaths {
-		fmt.Print(templatePath)
 		fileStats, _ := os.Stat(templatePath)
 		if fileStats.IsDir() {
 			continue
