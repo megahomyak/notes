@@ -21,18 +21,11 @@
 
 {{ define "contents" -}}
     {{ if .user -}}
-        <p>Signed in as {{ .user.FirstName }}{{ if .user.LastName }} {{ .user.LastName }}{{ end }} | <a href="#" onclick="signOut();">Sign out</a></p>
-        <script>
-            async function signOut() {
-                let requestForm = new FormData();
-                requestForm.set("csrf_token", "{{ .csrfToken }}")
-                await fetch("/api/sign_out/", {
-                    method: "POST",
-                    body: requestForm,
-                });
-                location.href = "";
-            }
-        </script>
+        <form action="/sign_out/" method="post">
+            <label>Signed in as {{ .user.FirstName }}{{ if .user.LastName }} {{ .user.LastName }}{{ end }} |</label>
+            <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
+            <input type="submit" value="Sign out">
+        </form>
         {{ if ne (len .user.Notes) 0 -}}
             <ol>
             {{- range .user.Notes -}}

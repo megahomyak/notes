@@ -41,22 +41,24 @@ func main() {
 	}
 
 	{
+		signOutRouter := rootRouter.Group("/")
+		signOutRouter.Use(middlewares.CSRFMiddleware)
+		signOutRouter.POST("/sign_out/", frontend_views.SignOut)
+	}
+
+	{
 		apiRouter := rootRouter.Group("/api")
 		apiRouter.POST("/sign_in/", api_views.SignIn)
 		{
-			routerWithCSRFCheck := apiRouter.Group("/")
-			routerWithCSRFCheck.Use(middlewares.CSRFMiddleware)
-			routerWithCSRFCheck.POST("/sign_out/", api_views.SignOut)
-			{
-				editNoteRouter := routerWithCSRFCheck.Group("/")
-				editNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-					utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeJSON,
-				))
-				editNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
-					middlewares.ResponseShouldBeJSON, "note_id",
-				))
-				editNoteRouter.POST("/note/:note_id/edit/", api_views.EditNote)
-			}
+			editNoteRouter := apiRouter.Group("/")
+			editNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
+				utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeJSON,
+			))
+			editNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
+				middlewares.ResponseShouldBeJSON, "note_id",
+			))
+			editNoteRouter.Use(middlewares.CSRFMiddleware)
+			editNoteRouter.POST("/note/:note_id/edit/", api_views.EditNote)
 		}
 	}
 

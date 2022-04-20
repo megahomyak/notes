@@ -1,4 +1,4 @@
-package api
+package frontend
 
 import (
 	"net/http"
@@ -11,10 +11,10 @@ import (
 func SignOut(c *gin.Context) {
 	accessTokenHash, err := utils.GetAccessTokenHash(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, utils.MakeJSONError("access_token wasn't provided!"))
+		c.HTML(http.StatusBadRequest, "access_token_was_not_provided.tmpl", nil)
 	} else {
 		models.DB.Delete(&models.AccessToken{}, "hash = ?", accessTokenHash)
-		c.SetCookie("access_token", "", 0, "/", "", true, true)
-		c.JSON(http.StatusOK, gin.H{})
-	}
+        c.SetCookie("access_token", "", 0, "/", "", true, true)
+        c.Redirect(http.StatusMovedPermanently, "/")
+    }
 }
