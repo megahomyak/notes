@@ -23,7 +23,7 @@ type Note struct {
 	ID       uint64
 	Name     string `gorm:"NOT NULL"`
 	Contents string `gorm:"NOT NULL"`
-	OwnerID  uint64 `gorm:"NOT NULL;UniqueIndex"`
+	OwnerID  uint64 `gorm:"NOT NULL;Index"`
 	Owner    *User  `gorm:"ForeignKey:OwnerID;Constraint:OnDelete:CASCADE"`
 }
 
