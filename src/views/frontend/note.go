@@ -15,9 +15,7 @@ func Note(c *gin.Context) {
 		return
 	}
 	if user.ID == note.ID {
-		templateData := gin.H{"note": note}
-		utils.AddCSRFToken(c, templateData)
-		c.HTML(http.StatusOK, "note.tmpl", templateData)
+		c.HTML(http.StatusOK, "note.tmpl", utils.AddCSRFToken(c, gin.H{"note": note}))
 	} else {
 		c.HTML(http.StatusForbidden, "note_is_inaccessible.tmpl", gin.H{"noteID": note.ID})
 	}
