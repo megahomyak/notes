@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
+	"fmt"
+	"net/http"
 	"notes/src/models"
 
 	"github.com/gin-gonic/gin"
@@ -52,3 +54,32 @@ func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
 		return token.Owner, nil
 	}
 }
+
+func getNoteOr404(responseAdder func(c *gin.Context, noteID int64)) func(*gin.Context) *models.Note {
+	return func(c *gin.Context) *models.Note {
+		note := models.Note{}
+		noteID := c.MustGet("note_id").(int64)
+		if errors.Is(
+			models.DB.Where("id = ?", noteID).Take(&note).Error,
+			gorm.ErrRecordNotFound,
+		) {
+			responseAdder(c, noteID)
+			return nil
+		}
+		return &note
+	}
+}
+
+var GetNoteOr404WithHTMLResponse func(c *gin.Context) *models.Note = getNoteOr404(
+	func(c *gin.Context, noteID int64) {
+		c.HTML(http.StatusNotFound, "note_not_found.tmpl", gin.H{"noteID": noteID})
+	},
+)
+
+var GetNoteOr404WithJSONResponse func(c *gin.Context) *models.Note = getNoteOr404(
+	func(c *gin.Context, noteID int64) {
+		c.JSON(http.StatusNotFound, MakeJSONError(
+			fmt.Sprintf("The note with an ID %d is not found!", noteID),
+		))
+	},
+)

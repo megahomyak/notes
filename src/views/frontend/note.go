@@ -1,28 +1,24 @@
 package frontend
 
 import (
-	"errors"
 	"net/http"
 	"notes/src/models"
+	"notes/src/views/utils"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func Note(c *gin.Context) {
 	user := c.MustGet("user").(*models.User)
-	note := models.Note{}
-	noteID := c.Param("note_id")
-	if errors.Is(
-		models.DB.Where("id = ?", noteID).Take(&note).Error,
-		gorm.ErrRecordNotFound,
-	) {
-		c.HTML(http.StatusNotFound, "note_not_found.tmpl", gin.H{"noteID": noteID})
+	note := utils.GetNoteOr404WithHTMLResponse(c)
+	if note == nil {
+		return
+	}
+	if user.ID == note.ID {
+		templateData := gin.H{"note": note}
+		utils.AddCSRFToken(c, templateData)
+		c.HTML(http.StatusOK, "note.tmpl", templateData)
 	} else {
-		if user.ID == note.ID {
-			c.HTML(http.StatusOK, "note.tmpl", gin.H{"note": note})
-		} else {
-			c.HTML(http.StatusForbidden, "note_is_inaccessible.tmpl", gin.H{"noteID": noteID})
-		}
+		c.HTML(http.StatusForbidden, "note_is_inaccessible.tmpl", gin.H{"noteID": note.ID})
 	}
 }

@@ -4,4 +4,27 @@
 
 {{ define "header" }}{{ .note.Name }}{{ end -}}
 
-{{ define "contents" }}{{ .note.Contents }}{{ end -}}
+{{ define "contents" }}
+<textarea class="note-contents" style="width:100%">{{ .note.Contents }}</textarea>
+<br/>
+<button onclick="saveNote();" type="button">Save</button>
+<p class="success-text" hidden>Saved succesfully!</p>
+<script>
+    async function saveNote() {
+        let requestForm = new FormData();
+        requestForm.set("csrf_token", "{{ .csrfToken }}");
+        requestForm.set("note_contents", document.querySelector(".note-contents").value);
+        let response = await fetch("/api/note/{{ .note.ID }}/edit/", {
+            method: "POST",
+            body: requestForm,
+        });
+        if (response.status == 200) {
+            let successText = document.querySelector(".success-text");
+            successText.hidden = false;
+            setTimeout(() => {
+                successText.hidden = true;
+            }, 5000);
+        }
+    }
+</script>
+{{ end -}}

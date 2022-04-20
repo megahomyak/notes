@@ -16,12 +16,12 @@ import (
 func SignIn(c *gin.Context) {
 	idToken := c.PostForm("id_token")
 	if idToken == "" {
-		c.JSON(http.StatusForbidden, utils.MakeJSONError("id_token wasn't provided!"))
+		c.JSON(http.StatusUnauthorized, utils.MakeJSONError("id_token wasn't provided!"))
 		return
 	}
 	claims, err := jwt.ValidateGoogleJWT(idToken)
 	if err != nil {
-		c.JSON(http.StatusForbidden, utils.MakeJSONError(err.Error()))
+		c.JSON(http.StatusUnauthorized, utils.MakeJSONError(err.Error()))
 		return
 	}
 	user := models.User{}
@@ -59,5 +59,5 @@ func SignIn(c *gin.Context) {
 		panic(transactionError)
 	}
 	utils.SetPermanentProtectedCookie(c, "access_token", base64.StdEncoding.EncodeToString(tokenContents))
-	c.JSON(http.StatusOK, map[string]string{})
+	c.JSON(http.StatusOK, gin.H{})
 }

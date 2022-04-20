@@ -1,4 +1,4 @@
-package middleware
+package middlewares
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CrsfMiddleware(c *gin.Context) {
+func CSRFMiddleware(c *gin.Context) {
 	csrfTokenCookie, cookieGettingError := c.Cookie("csrf_token")
 	csrfTokenFormData := c.PostForm("csrf_token")
 	if cookieGettingError != nil || csrfTokenFormData == "" || csrfTokenCookie != csrfTokenFormData {
