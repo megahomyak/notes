@@ -75,7 +75,22 @@ func main() {
 	}
 
 	{
-		rootRouter.GET("/empty_field_error/", views.EmptyFieldError)
+		dummyPagesRouter := rootRouter.Group("/")
+		dummyPagesRouter.GET("/empty_field_error/", views.EmptyFieldError)
+		dummyPagesRouter.GET("/note_not_found/", views.NoteNotFound)
+		dummyPagesRouter.GET("/note_is_inaccessible/", views.NoteIsInaccessible)
+	}
+
+	{
+		deleteNoteRouter := rootRouter.Group("/")
+		deleteNoteRouter.Use(middlewares.CSRFMiddleware)
+		deleteNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
+			middlewares.ResponseShouldBeHTML, "note_id",
+		))
+		deleteNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
+			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+		))
+		deleteNoteRouter.POST("/note/:note_id/delete/", views.DeleteNote)
 	}
 
 	// Setting up workers.

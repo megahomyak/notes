@@ -34,7 +34,13 @@
         {{ if ne (len .user.Notes) 0 -}}
             <ol>
             {{ range .user.Notes -}}
-                <li><a href="/note/{{ .ID }}">{{ .Name }}</a></li>
+                <li>
+                    <form action="/note/{{ .ID }}/delete/" method="post">
+                        <a href="/note/{{ .ID }}">{{ .Name }}</a>
+                    <input type="hidden" name="csrf_token" value="{{ $.csrfToken }}">
+                    <input type="submit" value="Delete">
+                    </form>
+                </li>
             {{ end -}}
             </ol>
         {{- else -}}
