@@ -15,6 +15,6 @@ func SignOut(c *gin.Context) {
 	} else {
 		models.DB.Delete(&models.AccessToken{}, "hash = ?", accessTokenHash)
         c.SetCookie("access_token", "", 0, "/", "", true, true)
-        c.Redirect(http.StatusMovedPermanently, "/")
+        c.Redirect(http.StatusFound, "/")
     }
 }
