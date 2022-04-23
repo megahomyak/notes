@@ -93,6 +93,11 @@ func main() {
 		deleteNoteRouter.POST("/note/:note_id/delete/", views.DeleteNote)
 	}
 
+	{
+		settingsRouter := rootRouter.Group("/")
+		settingsRouter.GET("/settings/", views.Settings)
+	}
+
 	// Setting up workers.
 
 	go workers.DeleteExpiredTokensPeriodically()
