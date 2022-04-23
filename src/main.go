@@ -2,8 +2,8 @@ package main
 
 import (
 	"notes/src/middlewares"
-	api_views "notes/src/views/api"
-	frontend_views "notes/src/views/frontend"
+	views "notes/src/views"
+	api "notes/src/api"
 	"notes/src/utils"
 	"notes/src/workers"
 
@@ -28,7 +28,7 @@ func main() {
 		getNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_id",
 		))
-		getNoteRouter.GET("/note/:note_id", frontend_views.GetNote)
+		getNoteRouter.GET("/note/:note_id", views.GetNote)
 	}
 
 	{
@@ -40,7 +40,7 @@ func main() {
 		createNoteRouter.Use(middlewares.PostFormFieldsValidatorMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_name",
 		))
-		createNoteRouter.POST("/note/", frontend_views.CreateNote)
+		createNoteRouter.POST("/note/", views.CreateNote)
 	}
 
 	{
@@ -48,19 +48,19 @@ func main() {
 		indexRouter.Use(middlewares.UserGetterMiddlewareGenerator(
 			utils.WithNotes, middlewares.IgnoreFailure, middlewares.ResponseShouldBeHTML,
 		))
-		indexRouter.GET("/", frontend_views.Index)
+		indexRouter.GET("/", views.Index)
 	}
 
 	{
 		signOutRouter := rootRouter.Group("/")
 		signOutRouter.Use(middlewares.CSRFMiddleware)
-		signOutRouter.POST("/sign_out/", frontend_views.SignOut)
+		signOutRouter.POST("/sign_out/", views.SignOut)
 	}
 
 	{
 		apiRouter := rootRouter.Group("/api")
-		apiRouter.POST("/sign_in/", api_views.SignIn)
-		apiRouter.GET("/empty_field_error/", api_views.EmptyFieldError)
+		apiRouter.POST("/sign_in/", api.SignIn)
+		apiRouter.GET("/empty_field_error/", api.EmptyFieldError)
 		{
 			editNoteRouter := apiRouter.Group("/")
 			editNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
@@ -70,12 +70,12 @@ func main() {
 				middlewares.ResponseShouldBeJSON, "note_id",
 			))
 			editNoteRouter.Use(middlewares.CSRFMiddleware)
-			editNoteRouter.POST("/note/:note_id/edit/", api_views.EditNote)
+			editNoteRouter.POST("/note/:note_id/edit/", api.EditNote)
 		}
 	}
 
 	{
-		rootRouter.GET("/empty_field_error/", frontend_views.EmptyFieldError)
+		rootRouter.GET("/empty_field_error/", views.EmptyFieldError)
 	}
 
 	// Setting up workers.
