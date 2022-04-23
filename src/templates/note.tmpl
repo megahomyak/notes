@@ -5,7 +5,7 @@
 {{ define "header" }}{{ .note.Name }}{{ end -}}
 
 {{ define "contents" }}
-<textarea class="note-contents" style="width:100%">{{ .note.Contents }}</textarea>
+<textarea class="note-contents" style="width:75%">{{ .note.Contents }}</textarea>
 <br/>
 <button onclick="saveNote();" type="button">Save</button>
 <p class="success-text" hidden>Saved succesfully!</p>

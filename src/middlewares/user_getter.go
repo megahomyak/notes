@@ -3,7 +3,7 @@ package middlewares
 import (
 	"errors"
 	"net/http"
-	"notes/src/views/utils"
+	"notes/src/utils"
 
 	"github.com/gin-gonic/gin"
 )

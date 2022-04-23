@@ -9,14 +9,13 @@
 {{ end -}}
 
 {{ define "head" -}}
-    {{ if not .user }}
+    {{- if not .user -}}
         <meta name="google-signin-client_id" content="{{ .googleClientID }}">
         <script src="https://apis.google.com/js/platform.js" async defer></script>
-    {{ end }}
-{{ end -}}
-
-{{ define "header" -}}
-    {{ template "title" . -}}
+    {{- end -}}
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 {{ end -}}
 
 {{ define "contents" -}}
@@ -26,11 +25,17 @@
             <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
             <input type="submit" value="Sign out">
         </form>
+        <br>
+        <form action="/note/" method="post">
+            <input type="text" name="note_name">
+            <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
+            <input type="submit" value="Create a new note" onclick="let form = event.target.parentElement; form.submit(); form.reset(); return false;">
+        </form>
         {{ if ne (len .user.Notes) 0 -}}
             <ol>
-            {{- range .user.Notes -}}
+            {{ range .user.Notes -}}
                 <li><a href="/note/{{ .ID }}">{{ .Name }}</a></li>
-            {{- end -}}
+            {{ end -}}
             </ol>
         {{- else -}}
             <p>You haven't created any notes yet!</p>

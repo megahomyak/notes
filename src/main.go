@@ -5,7 +5,7 @@ import (
 	"notes/src/templates/loader"
 	api_views "notes/src/views/api"
 	frontend_views "notes/src/views/frontend"
-	"notes/src/views/utils"
+	"notes/src/utils"
 	"notes/src/workers"
 
 	"github.com/gin-gonic/gin"
@@ -22,14 +22,26 @@ func main() {
 	)
 
 	{
-		noteRouter := rootRouter.Group("/")
-		noteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
+		getNoteRouter := rootRouter.Group("/")
+		getNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
 			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
-		noteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
+		getNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_id",
 		))
-		noteRouter.GET("/note/:note_id", frontend_views.Note)
+		getNoteRouter.GET("/note/:note_id", frontend_views.GetNote)
+	}
+
+	{
+		createNoteRouter := rootRouter.Group("/")
+		createNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
+			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+		))
+		createNoteRouter.Use(middlewares.CSRFMiddleware)
+		createNoteRouter.Use(middlewares.PostFormFieldsValidatorMiddlewareGenerator(
+			middlewares.ResponseShouldBeHTML, "note_name",
+		))
+		createNoteRouter.POST("/note/", frontend_views.CreateNote)
 	}
 
 	{
@@ -49,6 +61,7 @@ func main() {
 	{
 		apiRouter := rootRouter.Group("/api")
 		apiRouter.POST("/sign_in/", api_views.SignIn)
+		apiRouter.GET("/empty_field_error/", api_views.EmptyFieldError)
 		{
 			editNoteRouter := apiRouter.Group("/")
 			editNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
@@ -60,6 +73,10 @@ func main() {
 			editNoteRouter.Use(middlewares.CSRFMiddleware)
 			editNoteRouter.POST("/note/:note_id/edit/", api_views.EditNote)
 		}
+	}
+
+	{
+		rootRouter.GET("/empty_field_error/", frontend_views.EmptyFieldError)
 	}
 
 	// Setting up workers.

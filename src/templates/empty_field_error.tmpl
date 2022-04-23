@@ -1,0 +1,5 @@
+{{ template "generic_page" . -}}
+
+{{ define "title" }}Empty Field{{ end -}}
+
+{{ define "contents" }}<p>Form field "{{ .fieldName }}" was not filled. Please, re-send your request with the filled field.</p>{{ end -}}

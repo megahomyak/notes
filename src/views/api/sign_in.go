@@ -6,8 +6,8 @@ import (
 	"errors"
 	"net/http"
 	"notes/src/models"
-	"notes/src/views/utils"
-	"notes/src/views/utils/jwt"
+	"notes/src/utils"
+	"notes/src/utils/jwt"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

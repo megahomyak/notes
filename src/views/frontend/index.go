@@ -3,7 +3,7 @@ package frontend
 import (
 	"net/http"
 	"notes/src/config"
-	"notes/src/views/utils"
+	"notes/src/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,5 +17,8 @@ func Index(c *gin.Context) {
 	if user != nil {
 		utils.AddCSRFToken(c, templateData)
 	}
+	c.Header("Cache-Control", "no-cache, no-store, must-revalidate");
+	c.Header("Pragma", "no-cache");
+	c.Header("Expires", "0")
 	c.HTML(http.StatusOK, "index.tmpl", templateData)
 }

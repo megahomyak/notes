@@ -1,9 +1,8 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
-	"notes/src/views/utils"
+	"notes/src/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,7 @@ func PathParametersToIntegersMiddlewareGenerator(responseShouldBeJSON bool, path
 			} else {
 				if responseShouldBeJSON {
 					c.JSON(http.StatusBadRequest, utils.MakeJSONError(
-						fmt.Sprintf("Integer from the field %s is invalid.", pathParameterName),
+						"Integer from the field" + pathParameterName + "is invalid.",
 					))
 				} else {
 					c.HTML(http.StatusBadRequest, "invalid_integer.tmpl", gin.H{"pathParameterName": pathParameterName})

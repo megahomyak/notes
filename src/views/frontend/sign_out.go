@@ -3,7 +3,7 @@ package frontend
 import (
 	"net/http"
 	"notes/src/models"
-	"notes/src/views/utils"
+	"notes/src/utils"
 
 	"github.com/gin-gonic/gin"
 )
