@@ -24,7 +24,7 @@
             <label>Signed in as {{ .user.FirstName }}{{ if .user.LastName }} {{ .user.LastName }}{{ end }} |</label>
             <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
             <input type="submit" value="Sign out">
-            <span> | </span><a href="/settings"><button type="button">Settings</button></a>
+            <span> | </span><button type="button" onclick="document.location.href='/settings'; return false;">Settings</button>
         </form>
         <br>
         <form action="/note/" method="post">
