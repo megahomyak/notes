@@ -95,7 +95,17 @@ func main() {
 
 	{
 		settingsRouter := rootRouter.Group("/")
+		settingsRouter.Use(middlewares.UserGetterMiddlewareGenerator(
+			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+		))
 		settingsRouter.GET("/settings/", views.Settings)
+		{
+			changeFirstAndLastNameRouter := settingsRouter.Group("/settings")
+			changeFirstAndLastNameRouter.Use(middlewares.CSRFMiddleware)
+			changeFirstAndLastNameRouter.POST(
+				"/change_first_and_last_name/", views.ChangeFirstAndLastName,
+			)
+		}
 	}
 
 	// Setting up workers.

@@ -22,14 +22,14 @@
     {{ if .user -}}
         <form action="/sign_out/" method="post">
             <label>Signed in as {{ .user.FirstName }}{{ if .user.LastName }} {{ .user.LastName }}{{ end }} |</label>
-            <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
+            {{ template "csrf_token_field" $ }}
             <input type="submit" value="Sign out">
             <span> | </span><button type="button" onclick="document.location.href='/settings'; return false;">Settings</button>
         </form>
         <br>
         <form action="/note/" method="post">
             <input type="text" name="note_name">
-            <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
+            {{ template "csrf_token_field" $ }}
             <input type="submit" value="Create a new note" onclick="let form = event.target.parentElement; form.submit(); form.reset(); return false;">
         </form>
         {{ if ne (len .user.Notes) 0 -}}
@@ -38,8 +38,8 @@
                 <li>
                     <form action="/note/{{ .ID }}/delete/" method="post">
                         <a href="/note/{{ .ID }}">{{ .Name }}</a>
-                    <input type="hidden" name="csrf_token" value="{{ $.csrfToken }}">
-                    <input type="submit" value="Delete">
+                        {{ template "csrf_token_field" $ }}
+                        <input type="submit" value="Delete">
                     </form>
                 </li>
             {{ end -}}

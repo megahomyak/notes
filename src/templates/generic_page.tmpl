@@ -13,3 +13,7 @@
     </body>
 </html>
 {{- end -}}
+
+{{- define "csrf_token_field" -}}
+<input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
+{{- end -}}
