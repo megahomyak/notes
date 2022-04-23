@@ -2,7 +2,6 @@ package main
 
 import (
 	"notes/src/middlewares"
-	"notes/src/templates/loader"
 	api_views "notes/src/views/api"
 	frontend_views "notes/src/views/frontend"
 	"notes/src/utils"
@@ -16,7 +15,7 @@ func main() {
 
 	rootRouter := gin.Default()
 
-	loader.LoadTemplates(
+	utils.LoadTemplates(
 		rootRouter, "{{", "}}",
 		"templates/*", "templates/template_fillers.tmpl", "templates/generic_page.tmpl",
 	)
