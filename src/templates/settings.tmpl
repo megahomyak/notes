@@ -1,5 +1,14 @@
-{{ template "generic_page" -}}
+{{ template "generic_page" . -}}
 
 {{ define "title" }}Settings{{ end -}}
 
-{{ define "contents" }}<p>Settings are empty for now.</p>{{ end -}}
+{{ define "contents" }}
+<form action="/settings/change_first_and_last_name/" method="post">
+    {{ template "csrf_token_field" $ }}
+    <label>Here you can change your first and last name, respectively:</label>
+    <br />
+    <input type="text" name="first_name" value="{{ .user.FirstName }}">
+    <input type="text" name="last_name" value="{{ .user.LastName }}">
+    <input type="submit" value="Submit changes">
+</form>
+{{ end -}}
