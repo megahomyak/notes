@@ -11,4 +11,9 @@
     <input type="text" name="last_name" value="{{ .user.LastName }}">
     <input type="submit" value="Submit changes">
 </form>
+<hr>
+<form action="/settings/sign_out_everywhere/" method="post" onsubmit="return confirm('Do you really want to sign out everywhere?');">
+    {{ template "csrf_token_field" $ }}
+    <input type="submit" value="Sign out everywhere">
+</form>
 {{ end -}}

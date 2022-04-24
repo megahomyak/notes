@@ -100,11 +100,12 @@ func main() {
 		))
 		settingsRouter.GET("/settings/", views.Settings)
 		{
-			changeFirstAndLastNameRouter := settingsRouter.Group("/settings")
-			changeFirstAndLastNameRouter.Use(middlewares.CSRFMiddleware)
-			changeFirstAndLastNameRouter.POST(
+			individualSettingsRouter := settingsRouter.Group("/settings")
+			individualSettingsRouter.Use(middlewares.CSRFMiddleware)
+			individualSettingsRouter.POST(
 				"/change_first_and_last_name/", views.ChangeFirstAndLastName,
 			)
+			individualSettingsRouter.POST("/sign_out_everywhere/", views.SignOutEverywhere)
 		}
 	}
 
