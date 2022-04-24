@@ -1,4 +1,4 @@
-package views
+package index
 
 import (
 	"net/http"

@@ -1,4 +1,4 @@
-package views
+package dummies
 
 import (
 	"net/http"

@@ -2,8 +2,11 @@ package main
 
 import (
 	"notes/src/middlewares"
-	views "notes/src/views"
-	api "notes/src/api"
+	"notes/src/routes/views/dummies"
+	"notes/src/routes/views/index"
+	"notes/src/routes/views/users/notes"
+	"notes/src/routes/views/users/settings"
+	"notes/src/routes/api"
 	"notes/src/utils"
 	"notes/src/workers"
 
@@ -28,7 +31,7 @@ func main() {
 		getNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_id",
 		))
-		getNoteRouter.GET("/note/:note_id", views.GetNote)
+		getNoteRouter.GET("/note/:note_id/", notes.GetNote)
 	}
 
 	{
@@ -40,7 +43,7 @@ func main() {
 		createNoteRouter.Use(middlewares.PostFormFieldsValidatorMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_name",
 		))
-		createNoteRouter.POST("/note/", views.CreateNote)
+		createNoteRouter.POST("/note/", notes.CreateNote)
 	}
 
 	{
@@ -48,13 +51,13 @@ func main() {
 		indexRouter.Use(middlewares.UserGetterMiddlewareGenerator(
 			utils.WithNotes, middlewares.IgnoreFailure, middlewares.ResponseShouldBeHTML,
 		))
-		indexRouter.GET("/", views.Index)
+		indexRouter.GET("/", index.Index)
 	}
 
 	{
 		signOutRouter := rootRouter.Group("/")
 		signOutRouter.Use(middlewares.CSRFMiddleware)
-		signOutRouter.POST("/sign_out/", views.SignOut)
+		signOutRouter.POST("/sign_out/", index.SignOut)
 	}
 
 	{
@@ -76,9 +79,9 @@ func main() {
 
 	{
 		dummyPagesRouter := rootRouter.Group("/")
-		dummyPagesRouter.GET("/empty_field_error/", views.EmptyFieldError)
-		dummyPagesRouter.GET("/note_not_found/", views.NoteNotFound)
-		dummyPagesRouter.GET("/note_is_inaccessible/", views.NoteIsInaccessible)
+		dummyPagesRouter.GET("/empty_field_error/", dummies.EmptyFieldError)
+		dummyPagesRouter.GET("/note_not_found/", dummies.NoteNotFound)
+		dummyPagesRouter.GET("/note_is_inaccessible/", dummies.NoteIsInaccessible)
 	}
 
 	{
@@ -90,7 +93,7 @@ func main() {
 		deleteNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
 			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
-		deleteNoteRouter.POST("/note/:note_id/delete/", views.DeleteNote)
+		deleteNoteRouter.POST("/note/:note_id/delete/", notes.DeleteNote)
 	}
 
 	{
@@ -98,14 +101,14 @@ func main() {
 		settingsRouter.Use(middlewares.UserGetterMiddlewareGenerator(
 			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
-		settingsRouter.GET("/settings/", views.Settings)
+		settingsRouter.GET("/settings/", settings.Settings)
 		{
 			individualSettingsRouter := settingsRouter.Group("/settings")
 			individualSettingsRouter.Use(middlewares.CSRFMiddleware)
 			individualSettingsRouter.POST(
-				"/change_first_and_last_name/", views.ChangeFirstAndLastName,
+				"/change_first_and_last_name/", settings.ChangeFirstAndLastName,
 			)
-			individualSettingsRouter.POST("/sign_out_everywhere/", views.SignOutEverywhere)
+			individualSettingsRouter.POST("/sign_out_everywhere/", settings.SignOutEverywhere)
 		}
 	}
 
