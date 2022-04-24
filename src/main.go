@@ -109,6 +109,7 @@ func main() {
 				"/change_first_and_last_name/", settings.ChangeFirstAndLastName,
 			)
 			individualSettingsRouter.POST("/sign_out_everywhere/", settings.SignOutEverywhere)
+			individualSettingsRouter.POST("/delete_all_notes/", settings.DeleteAllNotes)
 		}
 	}
 

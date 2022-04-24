@@ -16,4 +16,9 @@
     {{ template "csrf_token_field" $ }}
     <input type="submit" value="Sign out everywhere">
 </form>
+<hr>
+<form action="/settings/delete_all_notes/" method="post" onsubmit="return confirm('Do you really want to delete all of your notes?');">
+    {{ template "csrf_token_field" $ }}
+    <input type="submit" value="Delete all of my notes">
+</form>
 {{ end -}}
