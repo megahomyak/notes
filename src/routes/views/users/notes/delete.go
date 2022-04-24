@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func DeleteNote(c *gin.Context) {
+func Delete(c *gin.Context) {
 	noteID := c.MustGet("note_id").(int64)
 	note := &models.Note{}
 	if errors.Is(models.DB.Where("id = ?", noteID).Take(&note).Error, gorm.ErrRecordNotFound) {

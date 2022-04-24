@@ -31,7 +31,7 @@ func main() {
 		getNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_id",
 		))
-		getNoteRouter.GET("/note/:note_id/", notes.GetNote)
+		getNoteRouter.GET("/note/:note_id/", notes.Get)
 	}
 
 	{
@@ -43,7 +43,7 @@ func main() {
 		createNoteRouter.Use(middlewares.PostFormFieldsValidatorMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_name",
 		))
-		createNoteRouter.POST("/note/", notes.CreateNote)
+		createNoteRouter.POST("/note/", notes.Create)
 	}
 
 	{
@@ -93,7 +93,7 @@ func main() {
 		deleteNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
 			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
-		deleteNoteRouter.POST("/note/:note_id/delete/", notes.DeleteNote)
+		deleteNoteRouter.POST("/note/:note_id/delete/", notes.Delete)
 	}
 
 	{

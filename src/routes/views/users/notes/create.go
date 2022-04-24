@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateNote(c *gin.Context) {
+func Create(c *gin.Context) {
 	user := c.MustGet("user").(*models.User)
 	note := &models.Note{ Name: c.PostForm("note_name"), Contents: "", OwnerID: user.ID }
 	models.DB.Create(&note)

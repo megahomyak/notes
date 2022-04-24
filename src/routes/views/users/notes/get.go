@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetNote(c *gin.Context) {
+func Get(c *gin.Context) {
 	user := c.MustGet("user").(*models.User)
 	note := utils.GetNoteOr404WithHTMLResponse(c)
 	if note == nil {
