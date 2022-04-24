@@ -3,14 +3,13 @@ package views
 import (
 	"net/http"
 	"notes/src/config"
-	"notes/src/models"
 	"notes/src/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Index(c *gin.Context) {
-	user := c.MustGet("user").(*models.User)
+	user := c.MustGet("user")
 	templateData := gin.H{
 		"user":           user,
 		"googleClientID": config.Config.Google.ClientID,
