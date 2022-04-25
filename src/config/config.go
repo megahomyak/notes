@@ -11,7 +11,8 @@ var Config struct {
 		ClientSecret string `json:"client_secret"`
 	} `json:"google"`
 	Database struct {
-		Arguments string `json:"arguments"`
+		Arguments map[string]string `json:"arguments"`
+		DefaultBackend string `json:"default_backend"`
 	} `json:"database"`
 }
 

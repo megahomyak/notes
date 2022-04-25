@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	gorm.io/driver/postgres v1.3.5
+	gorm.io/driver/sqlite v1.3.2
 	gorm.io/gorm v1.23.4
 )
 
@@ -38,6 +39,7 @@ require (
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
+	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	golang.org/x/sys v0.0.0-20220328115105-d36c6a25d886 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
