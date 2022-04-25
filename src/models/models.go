@@ -1,6 +1,7 @@
 package models
 
 import (
+	"notes/src/logging"
 	"time"
 )
 
@@ -13,7 +14,9 @@ type User struct {
 
 func (user *User) GetNotes() []Note {
 	var notes []Note
-	DB.Find(&notes, "owner_id = ?", user.ID)
+	if err := DB.Find(&notes, "owner_id = ?", user.ID).Error; err != nil {
+		logging.LogError(err)
+	}
 	return notes
 }
 
@@ -27,7 +30,9 @@ type AccessToken struct {
 var defaultTokenExpirationPeriod time.Duration = time.Hour * 24 * 30 * 6
 
 func (token *AccessToken) ResetExpiration() {
-	DB.Model(&AccessToken{}).Where("hash = ?", token.Hash).Update("expires_in", time.Now().Add(defaultTokenExpirationPeriod))
+	if err := DB.Model(&AccessToken{}).Where("hash = ?", token.Hash).Update("expires_in", time.Now().Add(defaultTokenExpirationPeriod)).Error; err != nil {
+		logging.LogError(err)
+	}
 }
 
 type Note struct {

@@ -9,6 +9,8 @@ import (
 
 func SignOutEverywhere(c *gin.Context) {
 	user := c.MustGet("user").(*models.User)
-	models.DB.Delete(&models.AccessToken{}, "owner_id = ?", user.ID)
+	if err := models.DB.Delete(&models.AccessToken{}, "owner_id = ?", user.ID).Error; err != nil {
+		c.Error(err)
+	}
 	c.Redirect(http.StatusFound, "/")
 }

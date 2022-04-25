@@ -13,7 +13,9 @@ func SignOut(c *gin.Context) {
 	if err != nil {
 		c.HTML(http.StatusBadRequest, "access_token_was_not_provided.tmpl", nil)
 	} else {
-		models.DB.Delete(&models.AccessToken{}, "hash = ?", accessTokenHash)
+		if err := models.DB.Delete(&models.AccessToken{}, "hash = ?", accessTokenHash).Error; err != nil {
+			c.Error(err)
+		}
         c.SetCookie("access_token", "", 0, "/", "", true, true)
         c.Redirect(http.StatusFound, "/")
     }

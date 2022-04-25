@@ -2,6 +2,7 @@ package api
 
 import (
 	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
 	"errors"
 	"net/http"
@@ -26,15 +27,18 @@ func SignIn(c *gin.Context) {
 	}
 	user := models.User{}
 	var tokenContents []byte
+	transactionOptions := sql.TxOptions{Isolation: sql.LevelSerializable}
 	transactionError := models.DB.Transaction(func(tx *gorm.DB) error {
-		if errors.Is(
-			models.DB.Where("jwt_subject = ?", claims.Subject).Take(&user).Error,
-			gorm.ErrRecordNotFound,
-		) {
+		userFindingError := models.DB.Where("jwt_subject = ?", claims.Subject).Take(&user).Error;
+		if errors.Is(userFindingError, gorm.ErrRecordNotFound) {
 			user.FirstName = claims.FirstName
 			user.LastName = claims.LastName
 			user.JWTSubject = claims.Subject
-			models.DB.Create(&user)
+			if err := models.DB.Create(&user).Error; err != nil {
+				c.Error(err)
+			}
+		} else if userFindingError != nil {
+			c.Error(userFindingError)
 		}
 		var accessTokenSlice []byte
 		for {
@@ -42,21 +46,22 @@ func SignIn(c *gin.Context) {
 			accessToken := sha256.Sum256(tokenContents)
 			accessTokenSlice = accessToken[:]
 			var exists bool
-			models.DB.Model(&models.AccessToken{}).Select("count(*) > 0").Where("hash = ?", accessTokenSlice).Find(&exists)
-			// This PROBABLY introduces a race condition, if the second transaction got the same hash.
-			// I don't know what's going to happen in this situation, especially in SQLite.
-			// This is for the case when the same access token already exists.
+			if err := models.DB.Model(&models.AccessToken{}).Select("count(*) > 0").Where("hash = ?", accessTokenSlice).Find(&exists).Error; err != nil {
+				c.Error(err)
+			}
 			if !exists {
 				break
 			}
 		}
 		token := models.AccessToken{Owner: &user, Hash: accessTokenSlice}
 		token.ResetExpiration()
-		models.DB.Create(&token)
+		if err := models.DB.Create(&token).Error; err != nil {
+			c.Error(err)
+		}
 		return nil
-	})
+	}, &transactionOptions)
 	if transactionError != nil {
-		panic(transactionError)
+		c.Error(transactionError)
 	}
 	utils.SetPermanentProtectedCookie(c, "access_token", base64.StdEncoding.EncodeToString(tokenContents))
 	c.JSON(http.StatusOK, gin.H{})

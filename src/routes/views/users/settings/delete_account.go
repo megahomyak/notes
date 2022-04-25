@@ -9,6 +9,8 @@ import (
 
 func DeleteAccount(c *gin.Context) {
 	user := c.MustGet("user").(*models.User)
-	models.DB.Unscoped().Delete(user)
+	if err := models.DB.Delete(user).Error; err != nil {
+		c.Error(err)
+	}
 	c.Redirect(http.StatusFound, "/")
 }

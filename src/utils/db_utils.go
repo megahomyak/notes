@@ -40,9 +40,12 @@ func GetUserByToken(c *gin.Context) (*models.User, error) {
 	userFindingError := models.DB.Where("hash = ?", accessTokenHash).Preload("Owner").Take(&token).Error
 	if errors.Is(userFindingError, gorm.ErrRecordNotFound) {
 		return nil, userFindingError
-	} else {
+	} else if userFindingError == nil {
 		token.ResetExpiration()
 		return token.Owner, nil
+	} else {
+		c.Error(userFindingError)
+		return nil, userFindingError
 	}
 }
 
@@ -50,14 +53,16 @@ func getNoteOr404(responseAdder func(c *gin.Context, noteID int64)) func(*gin.Co
 	return func(c *gin.Context) *models.Note {
 		note := models.Note{}
 		noteID := c.MustGet("note_id").(int64)
-		if errors.Is(
-			models.DB.Where("id = ?", noteID).Take(&note).Error,
-			gorm.ErrRecordNotFound,
-		) {
+		noteGettingError := models.DB.Where("id = ?", noteID).Take(&note).Error
+		if errors.Is(noteGettingError, gorm.ErrRecordNotFound) || noteGettingError != nil {
+			if !errors.Is(noteGettingError, gorm.ErrRecordNotFound) {
+				c.Error(noteGettingError)
+			}
 			responseAdder(c, noteID)
 			return nil
+		} else {
+			return &note
 		}
-		return &note
 	}
 }
 
@@ -70,7 +75,7 @@ var GetNoteOr404WithHTMLResponse func(c *gin.Context) *models.Note = getNoteOr40
 var GetNoteOr404WithJSONResponse func(c *gin.Context) *models.Note = getNoteOr404(
 	func(c *gin.Context, noteID int64) {
 		c.JSON(http.StatusNotFound, MakeJSONError(
-			fmt.Sprintf("The note with an ID %d is not found!", noteID),
+			fmt.Sprintf("The note with the ID %d is not found!", noteID),
 		))
 	},
 )
