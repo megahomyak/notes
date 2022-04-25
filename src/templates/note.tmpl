@@ -10,10 +10,16 @@
 <button onclick="saveNote();" type="button">Save</button>
 <p class="success-text" hidden>Saved succesfully!</p>
 <script>
+    function getNoteContents() {
+        return document.querySelector(".note-contents").value;
+    }
+    let lastSavedNoteContents = getNoteContents();
     async function saveNote() {
         let requestForm = new FormData();
         requestForm.set("csrf_token", "{{ .csrfToken }}");
-        requestForm.set("note_contents", document.querySelector(".note-contents").value);
+        let noteContents = getNoteContents();
+        requestForm.set("note_contents", noteContents);
+        lastSavedNoteContents = noteContents;
         let response = await fetch("/api/note/{{ .note.ID }}/edit/", {
             method: "POST",
             body: requestForm,
@@ -26,5 +32,10 @@
             }, 5000);
         }
     }
+    window.addEventListener("beforeunload", function(event) {
+        if (getNoteContents() != lastSavedNoteContents) {
+            event.preventDefault();
+        }
+    });
 </script>
 {{ end -}}
