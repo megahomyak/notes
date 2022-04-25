@@ -11,7 +11,7 @@ var Config struct {
 		ClientSecret string `json:"client_secret"`
 	} `json:"google"`
 	Database struct {
-		Filename string `json:"filename"`
+		Arguments string `json:"arguments"`
 	} `json:"database"`
 }
 
