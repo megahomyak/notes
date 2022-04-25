@@ -9,5 +9,9 @@ func init() {
 }
 
 func LogError(err error) {
-	logger.Println(err.Error())
+	Log(err.Error())
+}
+
+func Log(message string) {
+	logger.Println(message)
 }

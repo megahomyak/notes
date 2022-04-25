@@ -17,6 +17,7 @@ func main() {
 	// Setting up routes.
 
 	rootRouter := gin.Default()
+	rootRouter.Use(middlewares.ErrorLogger)
 
 	utils.LoadTemplates(
 		rootRouter, "{{", "}}",
