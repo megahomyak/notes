@@ -13,9 +13,9 @@ const (
 	IgnoreFailure  = false
 )
 
-func UserGetterMiddlewareGenerator(withNotes bool, abortOnFailure bool, responseShouldBeJSON bool) func(*gin.Context) {
+func UserGetterMiddlewareGenerator(abortOnFailure bool, responseShouldBeJSON bool) func(*gin.Context) {
 	return func(c *gin.Context) {
-		user, err := utils.GetUserByToken(c, withNotes)
+		user, err := utils.GetUserByToken(c)
 		if err != nil {
 			if abortOnFailure {
 				if responseShouldBeJSON {

@@ -6,10 +6,15 @@ import (
 
 type User struct {
 	ID         uint64
-	FirstName  string  `gorm:"NOT NULL"`
-	LastName   string  `gorm:"NOT NULL"`
-	JWTSubject string  `gorm:"UniqueIndex;NOT NULL"`
-	Notes      *[]Note `gorm:"ForeignKey:OwnerID"`
+	FirstName  string         `gorm:"NOT NULL"`
+	LastName   string         `gorm:"NOT NULL"`
+	JWTSubject string         `gorm:"UniqueIndex;NOT NULL"`
+}
+
+func (user *User) GetNotes() []Note {
+	var notes []Note
+	DB.Find(&notes, "owner_id = ?", user.ID)
+	return notes
 }
 
 type AccessToken struct {
@@ -19,16 +24,16 @@ type AccessToken struct {
 	Owner     *User     `gorm:"ForeignKey:OwnerID;Constraint:OnDelete:CASCADE"`
 }
 
+var defaultTokenExpirationPeriod time.Duration = time.Hour * 24 * 30 * 6
+
+func (token *AccessToken) ResetExpiration() {
+	DB.Model(&AccessToken{}).Where("hash = ?", token.Hash).Update("expires_in", time.Now().Add(defaultTokenExpirationPeriod))
+}
+
 type Note struct {
 	ID       uint64
 	Name     string `gorm:"NOT NULL"`
 	Contents string `gorm:"NOT NULL"`
 	OwnerID  uint64 `gorm:"NOT NULL;Index"`
 	Owner    *User  `gorm:"ForeignKey:OwnerID;Constraint:OnDelete:CASCADE"`
-}
-
-var defaultTokenExpirationPeriod time.Duration = time.Hour * 24 * 30 * 6
-
-func (token *AccessToken) ResetExpiration() {
-	DB.Model(&AccessToken{}).Where("hash = ?", token.Hash).Update("expires_in", time.Now().Add(defaultTokenExpirationPeriod))
 }

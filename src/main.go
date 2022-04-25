@@ -26,7 +26,7 @@ func main() {
 	{
 		getNoteRouter := rootRouter.Group("/")
 		getNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+			middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
 		getNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
 			middlewares.ResponseShouldBeHTML, "note_id",
@@ -37,7 +37,7 @@ func main() {
 	{
 		createNoteRouter := rootRouter.Group("/")
 		createNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+			middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
 		createNoteRouter.Use(middlewares.CSRFMiddleware)
 		createNoteRouter.Use(middlewares.PostFormFieldsValidatorMiddlewareGenerator(
@@ -49,7 +49,7 @@ func main() {
 	{
 		indexRouter := rootRouter.Group("/")
 		indexRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-			utils.WithNotes, middlewares.IgnoreFailure, middlewares.ResponseShouldBeHTML,
+			middlewares.IgnoreFailure, middlewares.ResponseShouldBeHTML,
 		))
 		indexRouter.GET("/", index.Index)
 	}
@@ -67,7 +67,7 @@ func main() {
 		{
 			editNoteRouter := apiRouter.Group("/")
 			editNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-				utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeJSON,
+				middlewares.AbortOnFailure, middlewares.ResponseShouldBeJSON,
 			))
 			editNoteRouter.Use(middlewares.PathParametersToIntegersMiddlewareGenerator(
 				middlewares.ResponseShouldBeJSON, "note_id",
@@ -91,7 +91,7 @@ func main() {
 			middlewares.ResponseShouldBeHTML, "note_id",
 		))
 		deleteNoteRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+			middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
 		deleteNoteRouter.POST("/note/:note_id/delete/", notes.Delete)
 	}
@@ -99,7 +99,7 @@ func main() {
 	{
 		settingsRouter := rootRouter.Group("/")
 		settingsRouter.Use(middlewares.UserGetterMiddlewareGenerator(
-			utils.WithoutNotes, middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
+			middlewares.AbortOnFailure, middlewares.ResponseShouldBeHTML,
 		))
 		settingsRouter.GET("/settings/", settings.Settings)
 		{
@@ -110,6 +110,7 @@ func main() {
 			)
 			individualSettingsRouter.POST("/sign_out_everywhere/", settings.SignOutEverywhere)
 			individualSettingsRouter.POST("/delete_all_notes/", settings.DeleteAllNotes)
+			individualSettingsRouter.POST("/delete_account/", settings.DeleteAccount)
 		}
 	}
 

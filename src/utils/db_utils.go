@@ -18,11 +18,6 @@ func (err *AccessTokenNotFound) Error() string {
 	return "accessToken isn't provided!"
 }
 
-const (
-	WithNotes = true
-	WithoutNotes = false
-)
-
 func GetAccessTokenHash(c *gin.Context) ([]byte, error) {
 	encodedAccessToken, err := c.Cookie("access_token")
 	if err != nil || encodedAccessToken == "" {
@@ -36,17 +31,13 @@ func GetAccessTokenHash(c *gin.Context) ([]byte, error) {
 	return accessTokenHash[:], nil
 }
 
-func GetUserByToken(c *gin.Context, withNotes bool) (*models.User, error) {
+func GetUserByToken(c *gin.Context) (*models.User, error) {
 	token := models.AccessToken{}
 	accessTokenHash, err := GetAccessTokenHash(c)
 	if err != nil {
 		return nil, err
 	}
-	query := models.DB.Where("hash = ?", accessTokenHash).Preload("Owner")
-	if withNotes {
-		query = query.Preload("Owner.Notes")
-	}
-	userFindingError := query.Take(&token).Error
+	userFindingError := models.DB.Where("hash = ?", accessTokenHash).Preload("Owner").Take(&token).Error
 	if errors.Is(userFindingError, gorm.ErrRecordNotFound) {
 		return nil, userFindingError
 	} else {

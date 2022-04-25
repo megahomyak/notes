@@ -32,9 +32,10 @@
             {{ template "csrf_token_field" $ }}
             <input type="submit" value="Create a new note" onclick="let form = event.target.parentElement; form.submit(); form.reset(); return false;">
         </form>
-        {{ if ne (len .user.Notes) 0 -}}
+        {{ $notes := .user.GetNotes }}
+        {{ if ne (len $notes) 0 -}}
             <ol>
-            {{ range .user.Notes -}}
+            {{ range $notes -}}
                 <li>
                     <form action="/note/{{ .ID }}/delete/" method="post">
                         <a href="/note/{{ .ID }}">{{ .Name }}</a>

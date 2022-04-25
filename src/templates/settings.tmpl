@@ -21,4 +21,9 @@
     {{ template "csrf_token_field" $ }}
     <input type="submit" value="Delete all of my notes">
 </form>
+<hr>
+<form action="/settings/delete_account/" method="post" onsubmit="return confirm('Do you really want to delete your account with all of your notes?');">
+    {{ template "csrf_token_field" $ }}
+    <input type="submit" value="Delete my account">
+</form>
 {{ end -}}
