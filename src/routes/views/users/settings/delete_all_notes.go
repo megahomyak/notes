@@ -12,5 +12,5 @@ func DeleteAllNotes(c *gin.Context) {
 	if err := models.DB.Delete(&models.Note{}, "owner_id = ?", user.ID).Error; err != nil {
 		c.Error(err)
 	}
-	c.Redirect(http.StatusFound, "/")
+	c.Redirect(http.StatusFound, "/settings/")
 }
